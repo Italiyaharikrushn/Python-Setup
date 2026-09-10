@@ -3,11 +3,10 @@ from api.dependencies import get_db
 from core.security import verify_password
 from schemas.auth import LoginSchema, RegisterSchema
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta, date
+from datetime import timedelta, date
 from services.user_service import create_access_token, create_user, get_user_by_email
 from core.config import settings
 router = APIRouter()
-
 
 @router.post('/login', status_code=(status.HTTP_201_CREATED))
 def login(login_schema: LoginSchema, db: Session = Depends(get_db)):
@@ -23,14 +22,7 @@ def login(login_schema: LoginSchema, db: Session = Depends(get_db)):
     if not is_password_valid:
         raise HTTPException(status_code=(status.HTTP_409_CONFLICT),
                             detail='Please check username and password.')
-    # if not user.is_active:
-    #     raise HTTPException(status_code=(status.HTTP_401_UNAUTHORIZED),
-    #                         detail='Your account is deactivated.')
     print(date.today())
-    # is_user_expired = user.expiry_date < date.today()
-    # if is_user_expired:
-    #     raise HTTPException(status_code=(status.HTTP_401_UNAUTHORIZED),
-    #                         detail='Please upgrade your plan.')
     claim = {'email': user.email,
              'id': user.id}
     token = create_access_token(claim, expires_delta=timedelta(

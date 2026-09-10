@@ -4,7 +4,6 @@ from pydantic import BaseModel
 from models.user import User
 from sqlalchemy.orm import Session
 from db.base_class import Base
-from schemas.user import UserSearch
 
 ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
@@ -29,27 +28,6 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     ) -> List[ModelType]:
         return db.query(self.model).offset(skip).limit(limit).all()    
  
-    # def get_sub_cate_multi(
-    #     self, db: Session, *, skip: int = 0, limit: int = 100, category_id : int
-    # ) -> List[ModelType]:
-        
-    #     return db.query(self.model).filter(SubCategorys.category_id == category_id).offset(skip).limit(limit).all()    
-
-   
-    
-    # def get_category_multi(
-    #     self, db: Session, *, skip: int = 0, limit: int = 100,
-    # ) -> List[ModelType]:
-    #     return db.query(self.model).offset(skip).limit(limit).all()
-
-    # def get_multi_with_filter(
-    #     self, db: Session, filter_tpl=None, skip: int = 0, limit: int = 100,
-    # ) -> List[ModelType]:
-    #     if filter_tpl is None:
-    #         return db.query(self.model).filter(User.is_super_admin == False).filter(self.model.status == 1).offset(skip).limit(limit).all()
-    #     else:
-    #         return db.query(self.model).filter(User.is_super_admin == False,self.model.status == 1, filter_tpl).offset(skip).limit(limit).all()
-
     def create(self, db: Session, *, obj_in: CreateSchemaType, created_by=None) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         obj_in_data["created_by"] = created_by
@@ -86,10 +64,3 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db.delete(obj)
         db.commit()
         return obj
-    
-
-
-
-
-
-
